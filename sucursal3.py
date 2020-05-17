@@ -18,7 +18,7 @@ app.config["MYSQL_PASSWORD"] = "kfsdppf50uopcx"
 app.config["MYSQL_DB"] = "pagaqui"
 mysql = MySQL(app)
 
-@app.route("/sucursal", methods=['GET'])
+@app.route("/sucursal",methods=['POST'])
 def sucursal(event=None, context=None):
 	data = request.get_json()
 	lat = data["lat"]
@@ -29,10 +29,12 @@ def sucursal(event=None, context=None):
 
 	cur = mysql.connection.cursor()
 	#sql = '''SELECT emp_run, suc_empresa_id FROM Sucursales WHERE emp_run=%s and suc_cuadrante_9 = "%s"'''
-	sql = '''SELECT e.emp_nombrecorto,s.emp_run,s.suc_empresa_id,s.suc_nombre,e.emp_logo_url,e.emp_color_fondo,s.suc_id FROM Sucursales s JOIN Empresas e ON s.emp_run = e.emp_run WHERE suc_9_cuadrante1="%s" OR suc_9_cuadrante2="%s" OR suc_9_cuadrante3="%s" OR suc_9_cuadrante4="%s" OR suc_9_cuadrante5="%s" OR suc_9_cuadrante6="%s" OR suc_9_cuadrante7="%s"''' 
+	sql = '''SELECT e.emp_nombrecorto,s.emp_run,s.suc_empresa_id,s.suc_nombre,e.emp_logo_url,e.emp_color_fondo,s.suc_id FROM Sucursales s JOIN Empresas e ON s.emp_run = e.emp_run WHERE e.emp_run=0 or suc_9_cuadrante1="%s" OR suc_9_cuadrante2="%s" OR suc_9_cuadrante3="%s" OR suc_9_cuadrante4="%s" OR suc_9_cuadrante5="%s" OR suc_9_cuadrante6="%s" OR suc_9_cuadrante7="%s"''' 
+	#sql = '''SET @cuadrante= '%s'; SELECT e.emp_nombrecorto,s.emp_run,s.suc_empresa_id,s.suc_nombre,e.emp_logo_url,e.emp_color_fondo FROM Sucursales s JOIN Empresas e ON s.emp_run = e.emp_run WHERE suc_9_cuadrante1=@cuadrante OR suc_9_cuadrante2=@cuadrante OR suc_9_cuadrante3=@cuadrante OR suc_9_cuadrante4=@cuadrante OR suc_9_cuadrante5=@cuadrante OR suc_9_cuadrante6=@cuadrante OR suc_9_cuadrante7=@cuadrante; '''
 	data = (h3_address_9, h3_address_9, h3_address_9, h3_address_9, h3_address_9, h3_address_9, h3_address_9)
+	#data = (h3_address_9)
 
-	#print (sql % data)
+	print (sql % data)
 	cur.execute(sql % data)
 	rv = cur.fetchall()
 
