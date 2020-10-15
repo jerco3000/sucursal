@@ -49,6 +49,33 @@ def sucursal(event=None, context=None):
 	return jsonify(lista)
 	#return jsonify(lista)
 
+@app.route("/producto",methods=['POST'])
+def producto(event=None, context=None):
+        data = request.get_json()
+        emp_run = data["emp_run"]
+        suc_empresa_id = data["suc_empresa_id"]
+        codigo = data["codigo"]
+
+        cur = mysql.connection.cursor()
+        sql = '''SELECT emp_run,suc_empresa_id,pp_codigo,pp_nombre, pp_descripcion,pp_url,pp_preciobruto,pp_iva,pp_precioneto from ProductosPrueba where emp_run=%s and suc_empresa_id="%s" and pp_codigo="%s";'''
+        data = (emp_run, suc_empresa_id, codigo)
+
+        #print (sql % data)
+        cur.execute(sql % data)
+        rv = cur.fetchall()
+
+        lista = []
+        for row in rv:
+                #lista.append({'emp_nombrecorto': row[0], 'emp_run' : row[1], 'suc_empresa' : row[2], 'suc_nombre' : row[3]}]
+                lista.append({'emp_run' : row[0], 'suc_empresa_id' : row[1],'pp_codigo' : row[2], 'pp_nombre' : row[3], 'pp_descripcion' : row[4], 'pp_url' : row[5], 'pp_preciobruto' : row[6], 'pp_iva' : row[7], 'pp_precioneto' : row[8], 'pp_cantidad' : 1})
+        # ##############################################
+        # Si no trae nada, deberia buscar en resolucion 8 tambien si no trae nada en 8, debe volver json con error indicando
+        # que no hay sucursal de esta tienda en esta posicion
+
+        return jsonify(lista)
+        #return jsonify(lista)
+
+
 if __name__ == "__main__":
         app.run(host='0.0.0.0')
 
